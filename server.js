@@ -9,9 +9,9 @@ app.use(express.json());
 const userSessions = {};
 
 const CLIENT_ID =
-  "3MVG9bYGb9rFSjxRGKcqftS.Q4b0eBnnvww7nuZcnvOPDbs1rRraFG4UsfTE_IxoRxnu.TCrDMxf9lRe3bJUP"; // Replace with your Salesforce Client ID
+  "3MVG9ux34Ig8G5ep45i4YyDEVbz8mZpIDsDAXIqU4SApBVw2dwUFuq5y.koCAa3hz8b8nOXF72vGrGyfeK5n5"; // Replace with your Salesforce Client ID
 const REDIRECT_URI =
-  "https://script.google.com/macros/s/1UH5PcXTekPhRML0xKnHD2JHfsMk4OhAD_4tdorv8OEIWc39qiRLcXol9/usercallback"; // Replace with your redirect URI
+  "https://script.google.com/macros/s/AKfycbykQZ-7eqIXxwYn0uEW-YpU-t_aQZwGcvpPkAxG6pwPLqUtJoOEsuVRjnwIAYnbODte/usercallback"; // Replace with your redirect URI
 
 // Route to get the auth URL
 app.post("/getAuthUrl", (req, res) => {
