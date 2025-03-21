@@ -193,6 +193,7 @@ app.get("/appscript/callback", async (req, res) => {
     `);
   }
 });
+La;
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).send("Server is running");
