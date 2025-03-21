@@ -18,6 +18,7 @@ const REDIRECT_URI = "https://katman.io/appscript/callback";
 // Create a more direct approach using URL parameters instead of form posting
 app.get("/appscript/callback", async (req, res) => {
   try {
+    // Log incoming request details
     console.log("Received callback with query params:", req.query);
 
     // Get the authorization code from Salesforce
@@ -46,13 +47,65 @@ app.get("/appscript/callback", async (req, res) => {
     console.log("Token exchange successful");
     const tokenData = tokenResponse.data;
 
-    // Use the correct script ID directly
-    const scriptId =
-      "14Q43XAnzcPTXLEU-ahx1WN6o7lyJ7h9k8rzTXp0s45udi80W9g39631P";
-    console.log("Using hardcoded script ID:", scriptId);
+    // Extract scriptId from state
+    let scriptId = "";
+    try {
+      // Check if scriptId is directly in query params
+      if (req.query.scriptId) {
+        scriptId = req.query.scriptId;
+        console.log("Found scriptId in query params:", scriptId);
+      }
+      // Try to parse from incoming URL structure
+      else if (
+        req.headers.referer &&
+        req.headers.referer.includes("/macros/d/")
+      ) {
+        const urlParts = req.headers.referer.split("/macros/d/");
+        if (urlParts.length > 1) {
+          scriptId = urlParts[1].split("/")[0];
+          console.log("Extracted scriptId from referer URL:", scriptId);
+        }
+      }
+      // Otherwise extract from state parameter
+      else if (state) {
+        // The exact extraction depends on your state token format
+        // For debugging, log the full state
+        console.log("Full state parameter:", state);
+
+        // Try direct extraction if the scriptId appears to be in the state
+        if (state.length > 20 && !state.includes("=")) {
+          scriptId = state;
+          console.log("Using state directly as scriptId:", scriptId);
+        } else {
+          // Try extracting the scriptId assuming it's the last part of a key=value pair
+          scriptId = state.split("=").pop();
+          console.log("Extracted scriptId from state as last value:", scriptId);
+        }
+      }
+
+      // Fallback to user-provided scriptId
+      if (!scriptId) {
+        // This is a fallback that should be removed once the issue is resolved
+        scriptId = "14Q43XAnzcPTXLEU-ahx1WN6o7lyJ7h9k8rzTXp0s45udi80W9g39631P";
+        console.log("Using fallback scriptId:", scriptId);
+      }
+    } catch (error) {
+      console.error("Error extracting scriptId:", error);
+      return res.status(500).send(`
+        <h2>Error Extracting Script ID</h2>
+        <p>Could not extract the Script ID from the state parameter.</p>
+        <p>State parameter: ${state}</p>
+        <p>Error: ${error.message}</p>
+      `);
+    }
 
     // Add scriptId to token data
     tokenData.scriptId = scriptId;
+
+    // Construct the Apps Script callback URL with the correct format:
+    // Using /macros/d/[scriptId]/usercallback as per the example URL
+    const appScriptUrl = `https://script.google.com/macros/d/${scriptId}/usercallback`;
+    console.log("Redirecting to Apps Script URL:", appScriptUrl);
 
     // Store all parameters to be sent
     const params = new URLSearchParams();
@@ -65,12 +118,8 @@ app.get("/appscript/callback", async (req, res) => {
     // Add source indicator
     params.append("source", "node_oauth_server");
 
-    // Construct the Apps Script URL - use the standard exec URL
-    const appScriptUrl = `https://script.google.com/macros/s/${scriptId}/exec`;
+    // Construct the full redirect URL
     const redirectUrl = `${appScriptUrl}?${params.toString()}`;
-
-    console.log("Redirecting to Apps Script with GET request");
-    console.log("Apps Script URL:", appScriptUrl);
 
     // Show debug info before redirecting
     res.send(`
@@ -89,7 +138,7 @@ app.get("/appscript/callback", async (req, res) => {
         <p class="success">✓ Successfully obtained Salesforce tokens</p>
         <p>Click the button below to continue to Google Apps Script:</p>
         
-        <p><button onclick="window.location.href='${appScriptUrl}?${params.toString()}'">Continue to Google Apps Script</button></p>
+        <p><button onclick="window.location.href='${redirectUrl}'">Continue to Google Apps Script</button></p>
         
         <h3>Debug Information:</h3>
         <p>Script ID: ${scriptId}</p>
@@ -104,7 +153,7 @@ app.get("/appscript/callback", async (req, res) => {
         <script>
           // Automatically redirect after 5 seconds
           setTimeout(function() {
-            window.location.href = '${appScriptUrl}?${params.toString()}';
+            window.location.href = '${redirectUrl}';
           }, 5000);
         </script>
       </body>
@@ -144,7 +193,6 @@ app.get("/appscript/callback", async (req, res) => {
     `);
   }
 });
-
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).send("Server is running");
