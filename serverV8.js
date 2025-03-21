@@ -26,23 +26,8 @@ app.get("/appscript/callback", async (req, res) => {
       return res.status(400).send("Authorization code or state missing");
     }
 
-    // Extract scriptId from state (for logging/debugging)
-    let scriptId = "";
-    if (state.includes("scriptId=")) {
-      const match = state.match(/scriptId=([^&]+)/);
-      if (match && match[1]) {
-        scriptId = decodeURIComponent(match[1]);
-      }
-    } else {
-      scriptId = state; // Fallback: assume state is the scriptId
-    }
-
-    if (!scriptId) {
-      console.error("Could not extract scriptId from state token");
-      return res
-        .status(400)
-        .send("Could not extract scriptId from state token");
-    }
+    // Log the state token for debugging
+    console.log("State token received from Salesforce:", state);
 
     // Construct the Apps Script callback URL
     const appScriptUrl = `https://script.google.com/macros/d/${scriptId}/usercallback`;
