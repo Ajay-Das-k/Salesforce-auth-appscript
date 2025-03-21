@@ -105,8 +105,10 @@ app.get("/health", (req, res) => {
   res.status(200).send("Server is running");
 });
 
+
 // Start the server
 app.listen(port, () => {
   console.log(`Salesforce OAuth server listening on port ${port}`);
   console.log(`Callback URL: ${REDIRECT_URI}`);
 });
+
