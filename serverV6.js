@@ -34,10 +34,8 @@ app.get("/appscript/callback", async (req, res) => {
     let scriptId = "";
     try {
       if (state) {
-        // Parse the state parameter to extract the scriptId
-        // Assuming the state is a JSON string like: `{"scriptId":"your-script-id"}`
-        const stateObj = JSON.parse(state);
-        scriptId = stateObj.scriptId;
+        // The state parameter is the scriptId itself
+        scriptId = state;
 
         if (!scriptId) {
           console.error("Script ID not found in state parameter");
