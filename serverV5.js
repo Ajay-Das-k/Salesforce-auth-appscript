@@ -34,15 +34,13 @@ app.get("/appscript/callback", async (req, res) => {
     let scriptId = "";
     try {
       if (state) {
-        // Log the full state for debugging
-        console.log("Full state parameter:", state);
-
-        // Try to extract the scriptId from the state
-        // The state parameter appears to contain the scriptId
+        // Assuming the state parameter is the scriptId itself
         scriptId = state;
 
-        // If the state is complex (e.g., contains multiple parameters),
-        // you might need more sophisticated parsing logic here
+        // If the state parameter contains more information, you might need to parse it
+        // For example, if the state is a JSON string, you can parse it like this:
+        // const stateObj = JSON.parse(state);
+        // scriptId = stateObj.scriptId;
       } else {
         console.error("State parameter missing");
         return res.status(400).send("State parameter missing");
