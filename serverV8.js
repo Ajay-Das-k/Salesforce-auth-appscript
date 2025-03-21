@@ -19,14 +19,14 @@ const REDIRECT_URI = "https://katman.io/appscript/callback";
 app.get("/appscript/callback", async (req, res) => {
   try {
     const code = req.query.code;
-    const state = req.query.state;
+    const state = req.query.state; // This is the state token from Salesforce
 
     if (!code || !state) {
       console.error("Authorization code or state missing");
       return res.status(400).send("Authorization code or state missing");
     }
 
-    // Extract scriptId from state
+    // Extract scriptId from state (for logging/debugging)
     let scriptId = "";
     if (state.includes("scriptId=")) {
       const match = state.match(/scriptId=([^&]+)/);
