@@ -46,61 +46,10 @@ app.get("/appscript/callback", async (req, res) => {
     console.log("Token exchange successful");
     const tokenData = tokenResponse.data;
 
-    // Extract scriptId from state
-    let scriptId = "";
-    try {
-      // Try multiple approaches to extract the scriptId
-
-      // First check if scriptId is directly in query params
-      if (req.query.scriptId) {
-        scriptId = req.query.scriptId;
-        console.log("Found scriptId directly in query params:", scriptId);
-      }
-      // Check state parameter format - it's often a complex token
-      else if (state && state.includes("scriptId")) {
-        // If state has scriptId=value format
-        const match = state.match(/scriptId=([^&]+)/);
-        if (match && match[1]) {
-          scriptId = match[1];
-          console.log("Extracted scriptId from state parameter:", scriptId);
-        } else {
-          // Try to extract from the URL-encoded state
-          try {
-            const decodedState = decodeURIComponent(state);
-            const stateMatch = decodedState.match(/scriptId=([^&]+)/);
-            if (stateMatch && stateMatch[1]) {
-              scriptId = stateMatch[1];
-              console.log("Extracted scriptId from decoded state:", scriptId);
-            }
-          } catch (e) {
-            console.error("Error decoding state:", e);
-          }
-        }
-      }
-
-      // If we still don't have a scriptId, try to extract from the state token
-      if (!scriptId && state) {
-        // Last resort: extract from the end of the state string
-        scriptId = state.split("=").pop();
-        console.log("Attempted to extract scriptId as last resort:", scriptId);
-      }
-
-      // Check if we have a valid-looking scriptId
-      if (!scriptId || scriptId.length < 10) {
-        console.error("Failed to extract valid scriptId from state:", state);
-        return res.status(500).send(`
-          <h2>Error Extracting Script ID</h2>
-          <p>Could not extract a valid Script ID from the state parameter.</p>
-          <p>State parameter: ${state}</p>
-        `);
-      }
-    } catch (error) {
-      console.error("Error extracting scriptId:", error);
-      return res.status(500).send(`
-        <h2>Error Processing State Token</h2>
-        <p>An error occurred while processing the state token: ${error.message}</p>
-      `);
-    }
+    // Use the correct script ID directly
+    const scriptId =
+      "14Q43XAnzcPTXLEU-ahx1WN6o7lyJ7h9k8rzTXp0s45udi80W9g39631P";
+    console.log("Using hardcoded script ID:", scriptId);
 
     // Add scriptId to token data
     tokenData.scriptId = scriptId;
