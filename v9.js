@@ -115,7 +115,7 @@ app.get('/appscript/callback', async (req, res) => {
               if (!scriptId) {
                 // Last resort: Use a hardcoded scriptId
                 // This should be replaced with your actual script ID
-                scriptId = '14Q43XAnzcPTXLEU-ahx1WN6o7lyJ7h9k8rzTXp0s45udi80W9g39631P';
+                scriptId = '1YD1P-VSHKRRvD9kGFWi3m01QczOF-fYK9qByVVEC-vWRmW4Mw-ViBVYS';
                 console.log('Using hardcoded scriptId as fallback');
               }
               
@@ -158,7 +158,7 @@ app.get('/appscript/callback', async (req, res) => {
     
   } catch (error) {
     console.error('Error in callback:', error);
-    const errorMsg = error.response?.data || error.message;
+    const errorMsg = (error.response && error.response.data) || error.message;
     return res.status(500).send(`Error processing authentication: ${errorMsg}`);
   }
 });
