@@ -8,10 +8,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Salesforce OAuth Configuration - ideally store these in environment variables
-const CLIENT_ID =
-  "3MVG9bYGb9rFSjxRGKcqftS.Q4ZMEPx93ujBMRTp7qHBYZgmo62LTHv5rdg901xM.9plVhqgwBJ1dNVBINCo5";
-const CLIENT_SECRET =
-  "853DF121B1CED3C82A332A07BA62DC3A7B1DBB55360ABFD453D2141C0C6BAEC6";
+ var CLIENT_ID =
+   "3MVG9bYGb9rFSjxRGKcqftS.Q4XyGEgKqPBGXj32xT5xpa.NiHWJNJSIUnkuFp5NJKvMIXeUrefkGB1myvxIw";
+ var CLIENT_SECRET =
+   "FB591165951E406DEFE30DAE866241F97144E195CE6157E72EC1D7FAEEBC19C8";
 const REDIRECT_URI = "https://katman.io/appscript/callback";
 const TOKEN_URL = "https://login.salesforce.com/services/oauth2/token";
 
