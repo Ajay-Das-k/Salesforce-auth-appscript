@@ -100,7 +100,7 @@ app.get("/appscript/callback", async (req, res) => {
     return res.redirect(callbackUrl);
   } catch (error) {
     console.error("Error in callback:", error);
-    const errorMsg = error.response?.data || error.message;
+    const errorMsg = (error.response && error.response.data) || error.message;
     return res.status(500).send(`Error processing authentication: ${errorMsg}`);
   }
 });
