@@ -78,17 +78,27 @@ app.get('/appscript/callback', async (req, res) => {
     const tokenData = tokenResponse.data;
     console.log('Received token data:', JSON.stringify(tokenData, null, 2));
 
-    // Construct the callback URL with the correct format
-    // Changed from /macros/s/{scriptId}/exec to /macros/d/{scriptId}/usercallback
-    const scriptCallbackUrl = `https://script.google.com/macros/d/${scriptId}/usercallback`;
+    // Try multiple URL formats for Google Apps Script
+    // Option 1: Using the deployed web app URL format
+    const scriptCallbackUrl = `https://script.google.com/macros/s/${scriptId}/exec`;
     
     // Build the redirect URL with token data
-    const redirectUrl = `${scriptCallbackUrl}?` + new URLSearchParams({
+    const params = new URLSearchParams({
       access_token: tokenData.access_token,
       refresh_token: tokenData.refresh_token,
       instance_url: tokenData.instance_url,
-      scriptId: scriptId
-    }).toString();
+      id: tokenData.id,
+      issued_at: tokenData.issued_at,
+      token_type: tokenData.token_type,
+      scope: tokenData.scope,
+      callback: 'true' // Add a parameter to indicate this is a callback
+    });
+    
+    // Add code and state parameters to preserve the original OAuth flow
+    if (code) params.append('code', code);
+    if (state) params.append('state', state);
+    
+    const redirectUrl = `${scriptCallbackUrl}?${params.toString()}`;
     
     console.log('Redirecting to:', redirectUrl);
     
