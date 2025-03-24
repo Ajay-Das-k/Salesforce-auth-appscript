@@ -42,7 +42,7 @@ app.get('/appscript/callback', async (req, res) => {
     
     console.log('Received code:', code);
     console.log('Received state:', state);
-    
+
     // Try to extract the scriptId from the state
     let scriptId = DEFAULT_SCRIPT_ID;
     let extractionMethod = 'default';
@@ -58,7 +58,7 @@ app.get('/appscript/callback', async (req, res) => {
     
     // Log the script ID and how we got it
     console.log(`Using script ID: ${scriptId} (extraction method: ${extractionMethod})`);
-    
+
     // Exchange the code for access tokens
     const tokenResponse = await axios({
       method: 'post',
@@ -77,9 +77,10 @@ app.get('/appscript/callback', async (req, res) => {
     
     const tokenData = tokenResponse.data;
     console.log('Received token data:', JSON.stringify(tokenData, null, 2));
-    
-    // Construct the callback URL directly
-    const scriptCallbackUrl = `https://script.google.com/macros/s/${scriptId}/exec`;
+
+    // Construct the callback URL with the correct format
+    // Changed from /macros/s/{scriptId}/exec to /macros/d/{scriptId}/usercallback
+    const scriptCallbackUrl = `https://script.google.com/macros/d/${scriptId}/usercallback`;
     
     // Build the redirect URL with token data
     const redirectUrl = `${scriptCallbackUrl}?` + new URLSearchParams({
@@ -93,11 +94,9 @@ app.get('/appscript/callback', async (req, res) => {
     
     // Redirect directly to the Apps Script
     return res.redirect(redirectUrl);
-    
   } catch (error) {
     console.error('Error in callback:', error);
-   const errorMsg = (error.response && error.response.data) || error.message;
-
+    const errorMsg = error.response?.data || error.message;
     return res.status(500).send(`Error processing authentication: ${errorMsg}`);
   }
 });
