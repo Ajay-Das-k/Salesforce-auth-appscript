@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Define the OAuth callback route
-app.post("/callback", (req, res) => {
+app.post("appscript/callback", (req, res) => {
   try {
     // Log the entire request body for debugging
     console.log(
